@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.1/bootstrap-slider.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.1/css/bootstrap-slider.min.css" />
+
+	<title>Energy Visualization</title>
+</head>
+<body>
+	<div class='container'>
+	<!-- "index","date.time","date","time","power","year","monthApril","monthAugust","monthDecember","monthFebruary","monthJanuary","monthJuly","monthJune","monthMarch","monthMay","monthNovember","monthOctober","monthSeptember","day.of.weekFriday","day.of.weekMonday","day.of.weekSaturday","day.of.weekSunday","day.of.weekThursday","day.of.weekTuesday","day.of.weekWednesday","day.of.year","day.of.month","week.of.year","week.of.month1","week.of.month2","week.of.month3","week.of.month4","week.of.month5","quarterQ1","quarterQ2","quarterQ3","quarterQ4","hour","holidayNo","holidayYes","Temperature","Dew.Point","Humidity","Speed","Gust","Pressure","Precip.Rate","Precip.Gauge","num.classes","num.students"-->
+
+
+		<input type="datetime-local" id='datetime' name="datetime" value="2016-08-21T08:00"><br>
+		<input type="text" id='num.classes' name="num.classes" value="10"><br>
+		<input type="text" id='temp' name="temp" value="70"><br>
+		<input type="text" id='num_students' name="num_students" value="200"><br>
+
+		<!-- <input type="time" id='time' name="time"><br> -->
+		<!-- <input type="text" id='date' name="date"><br>
+		<input type="text" id='temp' name="temp"><br>
+		<input type="text" id='dewpt' name="dewpt"><br>
+		<input type="text" id='Humidity' name="Humidity"><br>
+		<input type="text" id='speed' name="speed"><br>
+		<input type="text" id='gust' name="gust"><br>
+		<input type="text" id='pressure' name="pressure"><br>
+		<input type="text" id='prprate' name="prprate"><br>
+		<input type="text" id='prpgauge' name="prpgauge"><br>
+		<input type="text" id='classes' name="classes"><br>
+		<input type="text" id='students' name="students"><br> -->
+
+		<!-- <input type="text" id='blueSelect' name="blue"><br> -->
+		<button class='btn btn-default' onclick='updateColor()'>Update Colors</button>
+		<button class='btn btn-default' onclick='updateTimePlot()'>Update Time Plot</button>
+
+		
+		<!-- <input class='slider' id='idSelect' padding='10px 10px'
+				data-slider-min="1" data-slider-max="21000"> -->
+	</div>
+	<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 612 792" enable-background="new 0 0 612 792" xml:space="preserve">
+		<path id='Klaus' fill="#00AEEF" stroke="#00AEEF" stroke-width='5' stroke-miterlimit="10" d="M300, 130h74.7c0,0-0.7-50.7-53.4-87c-5.5,9.6-9.6,16.4-9.6,16.4
+			s17.1,7.5,22.6,21.9l-34.3,25.3z"/>
+		<polygon id='Clough' fill="#00AEEF" stroke="#00AEEF" stroke-width='7' stroke-miterlimit="10" points="362.1,413.2 362.1,401.8 403.9,401.8 403.9,513.5 
+			351.2,513.5 351.2,413.2 " transform='translate(-50, -250)'/>
+		<path id='CRC' fill="#00AEEF" stroke="#00AEEF" stroke-width='5' stroke-miterlimit="10" d="M40,20c9.7,0,13.6,0,13.6,0l1.8,5h12.5v-5h8.2v5h22.9v-2.5h10
+			v5.7h15.1v-2.2h12.9v9h33.7c0,0,12.2,1.1,10.8,17.6c-1.4,16.5-4.7,20.1-4.7,20.1v5.4h2.9l1.9,8.2l-5.1,7.9h-8.2v16.8h-26.5v20.1
+			h-40.9v-30.1h-10.4v-7.2h-15.4v5.4h-6.8v9.7h-9.3v-10.4h-6.5v-7.2h-8.6v-7.2h-7.2l-13.1-13.1v-38.5l0,0z"/>
+	</svg>
+	<script type="text/javascript" src="{{ url_for('static', filename = 'js/script.js') }}"></script>
+
+</body>
+</html>
