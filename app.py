@@ -1,6 +1,5 @@
-# We'll render HTML templates and access data sent by GET
-# using the request object from flask. jsonigy is required
-# to send JSON as a response of a request
+#Import libraries
+
 from flask import Flask, render_template, request, jsonify
 import pickle
 import sys
@@ -10,12 +9,9 @@ import ast
 import pandas as pd
 import xgboost
 
-model = pickle.load(open('static/data/culc.xgb.pickle.dat', 'rb'))
-# content = 0
-# with open('serializedpandas/dataArr.pkl', 'rb') as pickle_file:
-#     content = pickle.load(pickle_file)
-#from FinalAlgo import *
-# Initialize the Flask application
+model = pickle.load(open('static/data/culc.xgb2.pickle.dat', 'rb'))
+model1 = pickle.load(open('static/data/culc.xgb.pickle.dat', 'rb'))
+
 
 # print contents
 app = Flask(__name__)
@@ -33,9 +29,7 @@ y_train = y[:17515]
 y_test = y[17515:]
 
 
-# This route will show a form to perform an AJAX request
-# jQuery is loaded to execute the request and update the
-# value of the operation
+# Basic route for displaying webpage
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -80,6 +74,7 @@ def index():
 #     # print(prediction)
 #     return jsonify(result=prediction[0][0])
 
+#route to calculate historical values
 @app.route('/_calculate_hist', methods=['GET'])
 def calculate_hist():
     if request.method == 'GET':
@@ -88,21 +83,28 @@ def calculate_hist():
         temp = request.args.get('temp', 'whoops', type=str)
         num_students = request.args.get('num_students', 'whoops', type=str)
 
-        # time = request.args.get('time', 'whoops', type=str)
-        #process data
+        # format datetime
         datetime = list(datetime)
         datetime[-6] = ' '
         datetime[-2:] = '00'
         datetime = datetime + [':00']
         datetime = ''.join(datetime)
-        row = data.loc[data['date.time']==datetime]
-        row['num.classes'] = int(num_classes)
-        maxPower = data['power'].max()
-        print maxPower
+
+        # get historical data
+        row = data.loc[data['date.time']==datetime].copy()
+
+        # update values with deltas
+        row['num.classes'] += int(num_classes)
+        row['Temperature'] += int(temp)
+        row['num.students'] += int(num_students)
+
+        # getting maximum power
+        # maxPower = data['power'].max()
+        # print maxPower
         if (row.shape[0] == 1):
             cols = row.iloc[:, 5:]
             actual = int(row['power'])
-            expected = int(model.predict(cols)[0])
+            expected = int(model1.predict(cols)[0])
             return jsonify(success=True, truth=actual, prediction=expected)
         else:
             print 'Not successful'
@@ -116,19 +118,29 @@ def time_series():
         num_students = request.args.get('num_students', 'whoops', type=int)
 
         data2 = data.copy()
-        print data2.loc[(data2['num.classes']!=0), 'num.classes'].head()
         data2['num.classes'].astype(int)
         data2.loc[(data2['num.classes']!=0), 'num.classes'] += num_classes
         #data2.loc[(data2['num.classes']!=0), 'num.classes'] + num_classes
         data2['Temperature'] = data2['Temperature'].astype(int) + temp
         data2.loc[(data2['num.students']!=0), 'num.students'] += num_students
-        # data2['Temperature'] += temp
 
-        data2['predictPower'] = model()
+        # predict power usage for all time points
+        data2['predictPower'] = model1.predict(data2.iloc[:, 5:])
+        power = []
+        powerPredict = []
+        months = []
+        x = 0
+        for i in ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+            'September', 'October', 'November', 'December']:
+            monthData = data2.loc[data2['month{}'.format(i)] == 1, ['power', 'predictPower']]
+            power.append(monthData['power'].sum())
+            powerPredict.append(int(monthData['predictPower'].sum()))
+            months.append(i)
+            x += 1
 
-
-        # time = request.args.get('time', 'whoops', type=str)
+            # time = request.args.get('time', 'whoops', type=str)
         #process data
+        return jsonify({'success':True, 'truth':power, 'prediction':powerPredict, 'months':months})
         
 
 
