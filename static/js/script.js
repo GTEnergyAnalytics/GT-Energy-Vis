@@ -27,10 +27,8 @@ function updateColor() {
         num_classes: $('input[name="num.classes"]').val(),
         temp: $('input[name="temp"]').val(),
         num_students: $('input[name="num_students"]').val()
-        // time: $('input[name="time"]').val()
     }, function(data) {
-    	// $("#result").text(data.result);
-    	console.log(data.success, data.truth, data.prediction);
+    	console.log(data.success, data.prediction);
         $('#Clough').attr('fill', color(data.truth))
         $('#Clough').attr('stroke', color(data.prediction))
         g.append('text')
@@ -57,14 +55,14 @@ function updateTimePlot() {
         // time: $('input[name="time"]').val()
     }, function(data) {
         // $("#result").text(data.result);
-        console.log(data.success, data.truth, data.prediction, data.months);
+        console.log(data.success, data.prediction, data.months);
         // $('#Clough').attr('fill', x(data.truth))
         // $('#Clough').attr('stroke', x(data.prediction))
         var keys = data.months;
         dataBar = [data.truth, data.prediction]
         g.selectAll('*').remove()
         sum = 0
-        for(i = 0; i < data.truth.length; i++) {
+        for(i = 0; i < data.prediction.length; i++) {
             //iterate through data points and add bars (and month labels)
             g.append('rect')
                 .attr('x' ,i * 50 + 60)
@@ -72,8 +70,8 @@ function updateTimePlot() {
                 .attr('width', 40)
                 .attr('height', y(data.prediction[i]))
                 .attr('fill', "#1e90ff")
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide)
+                // .on('mouseover', tip.show)
+                // .on('mouseout', tip.hide)
 
             g.append('text')
                 .attr('x' ,i * 50 + 65)

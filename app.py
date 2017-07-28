@@ -18,10 +18,11 @@ app = Flask(__name__)
 
 
 data = pd.read_csv('static/data/energy_weather_schedule_dummies.csv')
+labels_df = pd.read_csv('static/data/labels.csv')
 # print(data.describe())
 
 x = data.iloc[:, 6:]
-y = data['power']
+y = labels_df['power']
 
 x_train = x.iloc[:17515, ]
 x_test = x.iloc[17515: ]
@@ -79,9 +80,9 @@ def index():
 def calculate_hist():
     if request.method == 'GET':
         datetime = request.args.get('datetime', 'whoops', type=str)
-        num_classes = request.args.get('num_classes', 'whoops', type=str)
-        temp = request.args.get('temp', 'whoops', type=str)
-        num_students = request.args.get('num_students', 'whoops', type=str)
+        num_classes = request.args.get('num_classes', 0, type=int)
+        temp = request.args.get('temp', 0, type=float)
+        num_students = request.args.get('num_students', 0, type=int)
 
         # format datetime
         datetime = list(datetime)
@@ -91,8 +92,11 @@ def calculate_hist():
         datetime = ''.join(datetime)
 
         # get historical data
+        print datetime
         row = data.loc[data['date.time']==datetime].copy()
-
+        print row
+        power = labels_df.loc[labels_df['date.time']==datetime].copy()
+        print power
         # update values with deltas
         row['num.classes'] += int(num_classes)
         row['Temperature'] += int(temp)
@@ -103,9 +107,10 @@ def calculate_hist():
         # print maxPower
         if (row.shape[0] == 1):
             cols = row.iloc[:, 5:]
-            actual = int(row['power'])
+            actual = int(power['power'])
             expected = int(model1.predict(cols)[0])
             return jsonify(success=True, truth=actual, prediction=expected)
+            # return jsonify(success=True, prediction=expected)
         else:
             print 'Not successful'
             return jsonify(success=False)
@@ -120,7 +125,6 @@ def time_series():
         data2 = data.copy()
         data2['num.classes'].astype(int)
         data2.loc[(data2['num.classes']!=0), 'num.classes'] += num_classes
-        #data2.loc[(data2['num.classes']!=0), 'num.classes'] + num_classes
         data2['Temperature'] = data2['Temperature'].astype(int) + temp
         data2.loc[(data2['num.students']!=0), 'num.students'] += num_students
 
@@ -140,7 +144,7 @@ def time_series():
 
             # time = request.args.get('time', 'whoops', type=str)
         #process data
-        return jsonify({'success':True, 'truth':power, 'prediction':powerPredict, 'months':months})
+        return jsonify({'success':True, 'prediction':powerPredict, 'months':months})
         
 
 
